@@ -70,8 +70,18 @@ class MyPortfolio:
         """
         TODO: Complete Task 4 Below
         """
-        
-        
+        for i in range(self.lookback, len(self.price)):
+            window = self.returns[assets].iloc[i - self.lookback : i]
+            vol = window.std()
+            vol.replace(0, np.nan, inplace=True)
+            inv_vol = 1 / vol
+            inv_vol.replace([np.inf, -np.inf], np.nan, inplace=True)
+            momentum = self.price[assets].iloc[i] / self.price[assets].iloc[i - self.lookback] - 1
+            inv_vol[momentum <= 0] = 0
+            if inv_vol.sum() == 0:
+                continue
+            weights = inv_vol / inv_vol.sum()
+            self.portfolio_weights.loc[self.price.index[i], assets] = weights
         """
         TODO: Complete Task 4 Above
         """
